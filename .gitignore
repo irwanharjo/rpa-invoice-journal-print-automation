@@ -1,0 +1,14 @@
+.env
+credentials.txt
+log_progress.json
+__pycache__/
+*.pyc
+Siap_Input/
+Selesai_Input/
+Hasil_Konversi/
+Cetak_Sementara/
+PriorityClient_Staging/
+PriorityClient_Arsip/
+*.xlsx
+*.pdf
+*.png
