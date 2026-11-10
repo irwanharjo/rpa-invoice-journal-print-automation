@@ -53,6 +53,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException
 
+# Chrome password-leak dialog suppression + entry-point DOM blocker cleanup.
+# See browser_hardening.py for the full story.
+from browser_hardening import suppress_chrome_popups, clear_page_blockers
+
 load_dotenv()
 
 # ============================================================
@@ -262,6 +266,10 @@ def buka_browser():
     # polling) that keeps the "load" event from ever firing, which made driver.get() hang
     # until the 120s read timeout even though the page had rendered normally.
     opsi.page_load_strategy = "eager"
+    # Prevent Chrome's "Change your password" (Password Manager leak check) dialog from
+    # stealing keyboard focus mid send_keys. That dialog lives OUTSIDE the DOM, so it can
+    # only be PREVENTED here -- Selenium can't close it.
+    suppress_chrome_popups(opsi)
     driver = webdriver.Chrome(options=opsi)
     driver.maximize_window()
     # Backup in case "eager" alone isn't enough: cap driver.get() at 20 seconds. If the
@@ -375,6 +383,9 @@ def login_ces(driver, username, password, lapor=_noop):
     _dengan_retry_renderer(_coba, lapor=lapor)
     print("Login submitted, waiting for the home page...")
     time.sleep(3)
+    # ENTRY POINT: clear DOM blockers (alert/swal/modal) exactly ONCE. Not called again
+    # mid-workflow -- the robot's own working modals are allow-listed and never touched.
+    clear_page_blockers(driver, report=lapor)
 
 
 def buka_jurnal_piutang(driver, lapor=_noop):

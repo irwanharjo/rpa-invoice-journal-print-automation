@@ -37,3 +37,7 @@ python robot_ces.py
 ## Stack
 
 Python · Selenium · pdfplumber · openpyxl · pywin32 · Tkinter · SumatraPDF (CLI)
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for what changed after the first public version (production hardening notes).
